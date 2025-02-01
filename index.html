@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello Kitty Mini-Game for Ahmed Imran</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      font-family: 'Poppins', sans-serif;
+      color: #ff69b4;
+      text-align: center;
+      flex-direction: column;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #ff1493;
+      text-shadow: 2px 2px 0 #fff, 4px 4px 0 #ff69b4;
+    }
+    .game {
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border: 5px solid #ff69b4;
+      box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+    }
+    .game::before {
+      content: "Click Me 10 Times!";
+      font-size: 1.5rem;
+      color: #ff1493;
+    }
+    .hidden-message {
+      display: none;
+      font-size: 2rem;
+      color: #ff1493;
+      animation: fadeIn 1s ease-in-out;
+      text-shadow: 2px 2px 0 #fff, 4px 4px 0 #ff69b4;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    /* Hello Kitty Image */
+    .hello-kitty {
+      width: 100px;
+      height: 100px;
+      margin-top: 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    /* Hide the YouTube video */
+    #youtube-audio {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+  </style>
+  <!-- Add Google Fonts for Better Readability -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>Hello Kitty Mini-Game! 🎀</h1>
+  <div class="game" onclick="handleClick()"></div>
+  <div class="hidden-message" id="hiddenMessage">Fakiha tum boht bakwas krti ho. 😂</div>
+
+  <!-- Hello Kitty Image -->
+  <img class="hello-kitty" src="https://i.imgur.com/3QZQZ.png" alt="Hello Kitty">
+
+  <!-- YouTube Music Embed -->
+  <div id="youtube-audio">
+    <iframe
+      width="0"
+      height="0"
+      src="https://www.youtube.com/embed/pJPnooVS7Ls?si=grL4NlYfiKKxYCET&autoplay=1&loop=1&playlist=pJPnooVS7Ls"
+      frameborder="0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <script>
+    let clickCount = 0;
+
+    function handleClick() {
+      clickCount++;
+      const game =
+document.querySelector('.game');
+      const hiddenMessage = document.getElementById('hiddenMessage');
+
+      // Hide the game and show the message
+      game.style.display = 'none';
+      hiddenMessage.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
