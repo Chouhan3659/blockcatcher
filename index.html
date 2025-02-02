@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hehe lets play😋</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #1a1a1a;
+      color: white;
+      text-align: center;
+      margin: 0;
+      overflow: hidden;
+    }
+    .game-container {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      background: #0d3b1a;
+      border-bottom: 5px solid #8b5e3c;
+    }
+    .player {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      width: 40px;
+      height: 40px;
+      background: url('https://via.placeholder.com/40/ffcc00/000000?text=🏃') no-repeat center center;
+      background-size: cover;
+      transform: translateX(-50%);
+    }
+    .obstacle {
+      position: absolute;
+      top: -40px;
+      width: 40px;
+      height: 40px;
+      background: url('https://via.placeholder.com/40/ff3b2f/000000?text=💣') no-repeat center center;
+      background-size: cover;
+      border-radius: 10px;
+    }
+    .power-up {
+      position: absolute;
+      top: -40px;
+      width: 40px;
+      height: 40px;
+      background: url('https://via.placeholder.com/40/00ff00/000000?text=🚀') no-repeat center center;
+      background-size: cover;
+      border-radius: 50%;
+    }
+    .score {
+      font-size: 2rem;
+      margin: 20px 0;
+    }
+    .timer {
+      font-size: 1.5rem;
+      margin: 10px 0;
+    }
+    .lives {
+      font-size: 1.5rem;
+      margin: 10px 0;
+    }
+    .message {
+      font-size: 1.5rem;
+      color: #ffcc00;
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="player" id="player"></div>
+  </div>
+  <div class="score">Score: <span id="score">0</span></div>
+  <div class="timer">Time: <span id="timer">120</span>s</div>
+  <div class="lives">Lives: <span id="lives">3</span></div>
+  <div class="message" id="message">You're cute to complete this game!</div>
+
+<!-- Hidden YouTube Music Player -->
+    <iframe 
+        width="0" 
+        height="0" 
+        src="https://www.youtube.com/embed/pJPnooVS7Ls?autoplay=1&loop=1&playlist=pJPnooVS7Ls" 
+        frameborder="0" 
+        allow="autoplay; encrypted-media" 
+        allowfullscreen>
+    </iframe>
+  <script>
+    const player = document.getElementById('player');
+    const gameContainer = document.querySelector('.game-container');
+    const scoreDisplay = document.getElementById('score');
+    const timerDisplay = document.getElementById('timer');
+    const livesDisplay = document.getElementById('lives');
+    const message = document.getElementById('message');
+    let score = 0;
+    let time = 120;
+    let lives = 3;
+    let gameSpeed = 2;
+    let isSpeedBoosted = false;
+
+    // Move player left and right
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        movePlayer(-20);
+      } else if (e.key === 'ArrowRight') {
+        movePlayer(20);
+      }
+    });
+
+    function movePlayer(offset) {
+      const playerRect = player.getBoundingClientRect();
+      const containerRect = gameContainer.getBoundingClientRect();
+      const newLeft = playerRect.left - containerRect.left + offset;
+
+      if (newLeft >= 0 && newLeft <= containerRect.width - playerRect.width) {
+        player.style.left = `${newLeft}px`;
+      }
+    }
+
+    // Create obstacles
+    function createObstacle() {
+      const obstacle = document.createElement('div');
+      obstacle.classList.add('obstacle');
+      obstacle.style.left = `${Math.random() * (gameContainer.offsetWidth - 40)}px`;
+      gameContainer.appendChild(obstacle);
+
+      moveObstacle(obstacle);
+    }
+
+    // Create power-ups
+    function createPowerUp() {
+      const powerUp = document.createElement('div');
+      powerUp.classList.add('power-up');
+      powerUp.style.left = `${Math.random() * (gameContainer.offsetWidth - 40)}px`;
+      gameContainer.appendChild(powerUp);
+
+      movePowerUp(powerUp);
+    }
+
+    function moveObstacle(obstacle) {
+      const obstacleInterval = setInterval(() => {
+        const obstacleTop = obstacle.offsetTop;
+        if (obstacleTop >= gameContainer.offsetHeight - 40) {
+          clearInterval(obstacleInterval);
+          gameContainer.removeChild(obstacle);
+        } else {
+          obstacle.style.top = `${obstacleTop + gameSpeed}px`;
+          checkCollision(obstacle);
+        }
+      }, 20);
+    }
+
+    function movePowerUp(powerUp) {
+      const powerUpInterval = setInterval(() => {
+        const powerUpTop = powerUp.offsetTop;
+        if (powerUpTop >= gameContainer.offsetHeight - 40) {
+          clearInterval(powerUpInterval);
+          gameContainer.removeChild(powerUp);
+        } else {
+          powerUp.style.top = `${powerUpTop + gameSpeed}px`;
+          checkPowerUpCollision(powerUp);
+        }
+      }, 20);
+    }
+
+    function checkCollision(obstacle) {
+      const playerRect = player.getBoundingClientRect();
+      const obstacleRect = obstacle.getBoundingClientRect();
+
+      if (
+        playerRect.left < obstacleRect.right &&
+        playerRect.right > obstacleRect.left &&
+        playerRect.bottom > obstacleRect.top
+      ) {
+        loseLife();
+        gameContainer.removeChild(obstacle);
+      }
+    }
+
+    function checkPowerUpCollision(powerUp) {
+      const playerRect = player.getBoundingClientRect();
+      const powerUpRect = powerUp.getBoundingClientRect();
+
+      if (
+        playerRect.left < powerUpRect.right &&
+        playerRect.right > powerUpRect.left &&
+        playerRect.bottom > powerUpRect.top
+      ) {
+        gameContainer.removeChild(powerUp);
+        activateSpeedBoost();
+      }
+    }
+
+    function increaseScore(points = 10) {
+      score += points;
+      scoreDisplay.textContent = score;
+      if (score >= 1000) {
+        message.style.display = 'block';
+        clearInterval(timerInterval);
+      }
+    }
+
+    function loseLife() {
+      lives--;
+      livesDisplay.textContent = lives;
+      if (lives <= 0) {
+        endGame();
+      }
+    }
+
+    function activateSpeedBoost() {
+      if (!isSpeedBoosted) {
+        isSpeedBoosted = true;
+        gameSpeed *= 2;
+        setTimeout(() => {
+          gameSpeed /= 2;
+          isSpeedBoosted = false;
+        }, 5000); // Speed boost lasts 5 seconds
+      }
+    }
+
+    function endGame() {
+      alert(`Game Over! Your score: ${score}`);
+      resetGame();
+    }
+
+    function resetGame() {
+      score = 0;
+      time = 120;
+      lives = 3;
+      scoreDisplay.textContent = score;
+      timerDisplay.textContent = time;
+      livesDisplay.textContent = lives;
+      message.style.display = 'none';
+      gameContainer.innerHTML = '<div class="player" id="player"></div>';
+    }
+
+    // Timer
+    const timerInterval = setInterval(() => {
+      time--;
+      timerDisplay.textContent = time;
+      if (time <= 0) {
+        clearInterval(timerInterval);
+        endGame();
+      }
+    }, 1000);
+
+    setInterval(createObstacle, 1000);
+    setInterval(createPowerUp, 5000);
+  </script>
+</body>
+</html>
