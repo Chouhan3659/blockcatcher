@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybernetic Block Catcher</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="loadingScreen">
+    <p>Tap anywhere to start!</p>
+  </div>
+  <div class="container hidden">
+    <h1 class="title">CATCH THE BLOCKS</h1>
+    <button id="startButton">hehe lets play :P</button>
+    <div id="gameContainer" class="hidden">
+      <div id="scoreboard">
+        <div>Score: <span id="currentScore">0</span></div>
+        <div>Time: <span id="timerDisplay">2:00</span></div>
+      </div>
+      <canvas id="gameCanvas"></canvas>
+      <div id="message" class="hidden">
+        <p>you're too cute to complete it</p>
+      </div>
+    </div>
+  </div>
+  <audio id="backgroundMusic" loop>
+    <source src="https://assets.mixkit.co/music/preview/mixkit-stereo-hearts-1681.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  <audio id="catchSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
+  <audio id="missSound" src="https://assets.mixkit.co/sfx/preview/mixkit-retro-game-notification-212.mp3"></audio>
+  <script src="script.js"></script>
+</body>
+</html>
