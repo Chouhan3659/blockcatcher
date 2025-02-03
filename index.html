@@ -3,132 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catch My Desire </title>
+    <title>Catch My Desire 💋</title>
     <style>
-        /* ... (Existing CSS styles - no changes needed) */
-        .music-button { /* Style for the music button */
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #ff0066;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            margin-bottom: 20px;
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Great+Vibes&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #1a1a1a, #4a004a);
+            font-family: 'Dancing Script', cursive;
+            overflow: hidden;
+            text-align: center;
+            color: #fff;
+            min-height: 100vh;
         }
 
-        .music-button:hover {
-            background-color: #e6005c;
+        h1 {
+            text-shadow: 0 0 10px rgba(255, 0, 102, 0.7);
+            font-size: 2.5rem;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+            padding: 0 15px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        canvas {
+            display: block;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 0, 102, 0.3);
+            backdrop-filter: blur(2px);
+        }
+
+        .pickup-line {
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin: 15px auto;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(255, 0, 102, 0.2);
+            display: none;
+            position: relative;
+            z-index: 2;
+        }
+
+        #endMessage {
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px rgba(255, 0, 102, 0.7);
+            display: none;
+            margin: 20px 15px;
+            padding: 0 15px;
+        }
+
+        .start-btn {
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            background: linear-gradient(45deg, #ff0066, #cc00cc);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 0, 102, 0.3);
+            transition: all 0.3s ease;
+            font-family: 'Great Vibes', cursive;
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 102, 0.5);
+        }
+
+        .hearts-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-heart {
+            position: absolute;
+            opacity: 0.3;
+            animation: float 8s infinite linear;
+            filter: drop-shadow(0 0 5px rgba(255, 0, 102, 0.5));
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        .music-note {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            text-shadow: 0 0 10px rgba(255, 0, 102, 0.5);
+            z-index: 3;
         }
     </style>
 </head>
 <body>
     <div class="hearts-container" id="heartsContainer"></div>
+    <div class="music-note" id="musicControl">🎵</div>
     <h1>Capture My Passion 💖</h1>
     <button class="start-btn" onclick="startGame()">Ignite the Spark 🔥</button>
     <canvas id="gameCanvas" width="600" height="400"></canvas>
-    <div class="pickup-line" id="pickupLine">Each heart you catch reveals my deepest desires...</div>
-    <div id="endMessage">You've stolen my heart completely! 🥰💘 <button class="start-btn" onclick="startGame()">Play Again</button></div>
+    <div class="pickup-line" id="pickupLine"></div>
+    <div id="endMessage">You've stolen my heart completely! 🥰💘</div>
 
-    <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/17086720&color=%23ff0066&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+    <audio id="backgroundMusic" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-chase-389.mp3" type="audio/mpeg">
+        Your browser does not support audio
+    </audio>
 
     <script>
-        // ... (Floating heart creation - no changes needed)
+        // Music Handling
+        const audio = document.getElementById('backgroundMusic');
+        const musicControl = document.getElementById('musicControl');
+        let musicPlaying = false;
 
+        musicControl.addEventListener('click', () => {
+            if (musicPlaying) {
+                audio.pause();
+                musicControl.textContent = '🔇';
+            } else {
+                audio.play().catch(() => {
+                    alert("Please interact with the page to start music!");
+                });
+                musicControl.textContent = '🎵';
+            }
+            musicPlaying = !musicPlaying;
+        });
+
+        // Floating Hearts Background
+        function createFloatingHearts() {
+            const container = document.getElementById('heartsContainer');
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.className = 'floating-heart';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                heart.style.animationDelay = Math.random() * 8 + 's';
+                container.appendChild(heart);
+            }
+        }
+        createFloatingHearts();
+
+        // Game Elements
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
-
-        // ... (Basket properties - no changes needed)
+        const basket = {
+            x: canvas.width / 2 - 40,
+            y: canvas.height - 50,
+            width: 80,
+            height: 30
+        };
 
         const hearts = [];
-        const heartRadius = 15;
-
-        let score = 0;
-        let gameRunning = false;
-        let heartInterval;
-        let currentPickupLine = 0;
-        let soundPlaying = false;
-
         const pickupLines = [
-            // ... (Pickup lines - no changes needed)
+            "Are you a campfire? Because you're hot and I want s'more of you 🔥",
+            "Is your name Wi-Fi? Because I'm really feeling a connection 📶",
+            "Are you French? Because Eiffel for you 🗼",
+            "You must be a bank loan... because you have my interest 💰",
+            "Are you a time traveler? Because I see you in my future ⏳",
+            "If you were a vegetable, you'd be a cute-cumber 🥒",
+            "Are you a parking ticket? Because you've got 'fine' written all over you 🚗",
+            "Is your dad a baker? Because you've got nice buns 🍑",
+            "Are you a haunted house? Because I'm feeling spirited 👻",
+            "Are you a moonstone? Because you're rare and out of this world 🌙",
+            "Is your name Cinderella? Because I see you at midnight and vanish 💃"
         ];
 
-        // ... (drawHeart and drawBasket functions - no changes needed)
+        // Game Initialization
+        let gameRunning = false;
+        let score = 0;
+        let heartInterval;
 
+        function startGame() {
+            if (gameRunning) return;
+            gameRunning = true;
+            score = 0;
+            hearts.length = 0;
 
-        function createHeart() {
-            const x = Math.random() * (canvas.width - 2 * heartRadius) + heartRadius;
-            const speed = Math.random() * 2 + 2; // Vary heart speed
-            hearts.push({ x, y: -heartRadius, speed });
+            // Reset display elements
+            document.querySelector('.start-btn').style.display = 'none';
+            document.getElementById('endMessage').style.display = 'none';
+
+            // Start music with user interaction
+            audio.play().catch(() => {
+                musicControl.style.display = 'block';
+            });
+
+            // Game loop
+            heartInterval = setInterval(createHeart, 900);
+            animate();
         }
 
-        function updateGame() {
-            if (!gameRunning) return;
+        // Drawing Functions
+        function drawHeart(x, y) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.bezierCurveTo(x - 15, y - 15, x - 30, y + 15, x, y + 30);
+            ctx.bezierCurveTo(x + 30, y + 15, x + 15, y - 15, x, y);
+            ctx.closePath();
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, 20);
+            gradient.addColorStop(0, '#ff0066');
+            gradient.addColorStop(1, '#ff00cc');
 
-            drawBasket();
+            ctx.fillStyle = gradient;
+            ctx.shadowColor = '#ff0066';
+            ctx.shadowBlur = 15;
+            ctx.fill();
+            ctx.restore();
+        }
 
-            for (let i = hearts.length - 1; i >= 0; i--) {
-                const heart = hearts[i];
-                heart.y += heart.speed;  // Use the speed property
+        function drawBasket() {
+            ctx.save();
+            ctx.beginPath();
+            ctx.roundRect(basket.x, basket.y, basket.width, basket.height, 10);
 
-                if (heart.y + heartRadius > canvas.height) {
-                    hearts.splice(i, 1);
-                    continue;
-                }
+            const gradient = ctx.createLinearGradient(
+                basket.x, basket.y,
+                basket.x, basket.y + basket.height
+            );
+            gradient.addColorStop(0, '#ff00cc');
+            gradient.addColorStop(1, '#ff0066');
 
-                drawHeart(heart.x, heart.y);
+            ctx.fillStyle = gradient;
+            ctx.shadowColor = '#ff0066';
+            ctx.shadowBlur = 20;
+            ctx.fill();
+            ctx.restore();
+        }
 
-                if (heart.y + heartRadius > basket.y &&
+        // Game Logic
+        function createHeart() {
+            hearts.push({
+                x: Math.random() * (canvas.width - 30),
+                y: 0,
+                speed: Math.random() * 3 + 2
+            });
+        }
+
+        function animate() {
+            update();
+            draw();
+            if (gameRunning) requestAnimationFrame(animate);
+        }
+
+        function update() {
+            hearts.forEach((heart, index) => {
+                heart.y += heart.speed;
+
+                // Collision detection
+                if (heart.y + 15 > basket.y &&
                     heart.x > basket.x &&
                     heart.x < basket.x + basket.width) {
                     score++;
-                    hearts.splice(i, 1);
-
-                    if (currentPickupLine < pickupLines.length) {
-                        document.getElementById("pickupLine").innerText = pickupLines[currentPickupLine];
-                        currentPickupLine++;
-                    } else {
-                        endGame();
-                    }
+                    hearts.splice(index, 1);
+                    showPickupLine();
                 }
-            }
 
-            requestAnimationFrame(updateGame);
+                if (heart.y > canvas.height) hearts.splice(index, 1);
+            });
+
+            if (score >= 10) endGame();
         }
 
-
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "ArrowLeft" && basket.x > 0) {
-                basket.x -= 20;
-            } else if (event.key === "ArrowRight" && basket.x + basket.width < canvas.width) {
-                basket.x += 20;
-            }
-        });
-
-                document.addEventListener("touchmove", (event) => {
-            let touchX = event.touches[0].clientX;
-            let canvasRect = canvas.getBoundingClientRect();
-            let newX = touchX - canvasRect.left - basket.width / 2;
-
-            if (newX < 0) newX = 0;
-            if (newX + basket.width > canvas.width) newX = canvas.width - basket.width;
-
-            basket.x = newX;
-        });
-
-        function startGame() {
-            document.querySelector('.start-btn').style.display = 'none';
-            document.getElementById('endMessage').style.display = 'none';
-            gameRunning = true;
-            score = 0;
-            currentPickupLine = 0;
-            document.getElementById('pickupLine').innerText = pickupLines[currentPickupLine];
-            hearts.length = 0; // Clear existing hearts
-            updateGame(); // Start the game loop *FIRST*
-            heartInterval = setInterval(createHeart, 800); // *THEN* start creating hearts
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hearts.forEach(heart => drawHeart(heart.x, heart.y));
+            drawBasket();
         }
 
         function endGame() {
@@ -136,34 +297,30 @@
             clearInterval(heartInterval);
             document.getElementById('endMessage').style.display = 'block';
             document.querySelector('.start-btn').style.display = 'block';
-            document.querySelector('.start-btn').innerText = "Ignite the Spark 🔥";
         }
 
-        // Music Playback
-        const musicButton = document.createElement('button');
-        musicButton.textContent = "Play Music";
-        musicButton.classList.add('music-button');
-        document.body.insertBefore(musicButton, document.getElementById("gameCanvas"));
+        function showPickupLine() {
+            const line = document.getElementById('pickupLine');
+            line.textContent = pickupLines[Math.floor(Math.random() * pickupLines.length)];
+            line.style.display = 'block';
+            setTimeout(() => line.style.display = 'none', 3000);
+        }
 
-        musicButton.addEventListener('click', () => {
-            const iframe = document.querySelector('iframe');
-            const player = iframe.contentWindow.document.querySelector('audio');
-
-            if (player) {
-                if (!soundPlaying) {
-                    player.play();
-                    soundPlaying = true;
-                    musicButton.textContent = "Pause Music";
-                } else {
-                    player.pause();
-                    soundPlaying = false;
-                    musicButton.textContent = "Play Music";
-                }
-            } else {
-                console.error("Audio player not found in iframe.");
-            }
+        // Controls
+        canvas.addEventListener('mousemove', (e) => {
+            if (!gameRunning) return;
+            const rect = canvas.getBoundingClientRect();
+            basket.x = e.clientX - rect.left - basket.width / 2;
+            basket.x = Math.max(0, Math.min(canvas.width - basket.width, basket.x));
         });
 
+        canvas.addEventListener('touchmove', (e) => {
+            if (!gameRunning) return;
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            basket.x = e.touches[0].clientX - rect.left - basket.width / 2;
+            basket.x = Math.max(0, Math.min(canvas.width - basket.width, basket.x));
+        });
     </script>
 </body>
 </html>
