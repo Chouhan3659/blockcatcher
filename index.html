@@ -3,122 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flirty Mini-Game</title>
+    <title>Catch My Heart ❤️</title>
     <style>
         @font-face {
-            font-family: 'Feelfree';
-            src: url('https://fonts.cdnfonts.com/s/19185/Feelfree.ttf') format('truetype');
+            font-family: 'Cute Dog';
+            src: url('https://fonts.cdnfonts.com/s/19185/CuteDog.ttf') format('truetype');
         }
 
         body {
             margin: 0;
             padding: 0;
             background-color: #51e2f5;
-            font-family: 'Feelfree', sans-serif;
+            font-family: 'Cute Dog', sans-serif;
             overflow: hidden;
+            text-align: center;
         }
 
         h1 {
-            text-align: center;
-            color: #edf756;
-            text-shadow: 2px 2px 5px #ffa8b6;
-            margin-top: 20px;
+            color: #ff4081;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            font-size: 2.5rem;
+            font-weight: bold;
         }
 
         canvas {
             display: block;
-            margin: 0 auto;
+            margin: 20px auto;
             background-color: #9df9ef;
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
 
         .pickup-line {
-            text-align: center;
-            font-size: 24px;
-            color: #ffa8b6;
+            font-size: 1.5rem;
+            color: #ffffff;
+            background-color: rgba(255, 64, 129, 0.8);
+            padding: 10px;
+            border-radius: 10px;
             margin-top: 10px;
         }
 
         #endMessage {
-            text-align: center;
             font-size: 28px;
             color: #edf756;
             display: none;
+        }
+
+        .start-btn {
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #ff4081;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.1);
         }
     </style>
 </head>
 <body>
 
 <h1>Catch My Heart ❤️</h1>
+<button class="start-btn" onclick="startGame()">Click to Start</button>
 <canvas id="gameCanvas" width="600" height="400"></canvas>
 <div class="pickup-line" id="pickupLine">Catch hearts to unlock my pickup lines!</div>
 <div id="endMessage">You were too cute to play it! 😍</div>
 
-<audio id="backgroundMusic" loop>
-    <source src="path_to_stereo_hearts.mp3" type="audio/mpeg">
+<audio id="backgroundMusic" loop autoplay>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
     Your browser does not support the audio element.
 </audio>
 
 <script>
-    // Game Setup
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-    // Variables
     const basket = { x: canvas.width / 2 - 40, y: canvas.height - 50, width: 80, height: 20 };
     const hearts = [];
     const heartRadius = 10;
+
     let score = 0;
+    let gameRunning = false;
 
     const pickupLines = [
         "Are you a magician? Because whenever I look at you, everyone else disappears!",
         "Do you have a map? I just got lost in your eyes.",
         "Are you made of copper and tellurium? Because you're Cu-Te.",
         "Is your name Google? Because you've got everything I'm searching for.",
-        "You must be the square root of -1 because you can't be real.",
         "If looks could kill, you'd be a weapon of mass seduction.",
         "Can I borrow a kiss? I promise I'll give it back."
     ];
 
     let currentPickupLine = 0;
 
-    // Background Music
-    const backgroundMusic = document.getElementById("backgroundMusic");
-    backgroundMusic.play();
-
-    // Basket Movement
-    document.addEventListener("keydown", (event) => {
-        if (event.key === "ArrowLeft" && basket.x > 0) {
-            basket.x -= 20;
-        } else if (event.key === "ArrowRight" && basket.x + basket.width < canvas.width) {
-            basket.x += 20;
-        }
-    });
-
-    // Create Falling Hearts
+    // Create falling hearts
     function createHeart() {
-        const x = Math.random() * (canvas.width - heartRadius * 2) + heartRadius;
+        const x = Math.random() * (canvas.width - heartRadius * 2) + heartRadius; // Random x position
         hearts.push({ x, y: -heartRadius });
     }
 
-    // Update Game State
-    function updateGame() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw Basket
-        ctx.fillStyle = "#ffa8b6";
+    // Draw basket
+    function drawBasket() {
+        ctx.fillStyle = "#ff4081";
         ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+    }
 
-        // Draw Hearts
-        for (let i = hearts.length - 1; i >= 0; i--) {
-            const heart = hearts[i];
+    // Draw hearts
+    function drawHearts() {
+        ctx.fillStyle = "#edf756";
+        hearts.forEach((heart) => {
             ctx.beginPath();
             ctx.arc(heart.x, heart.y, heartRadius, 0, Math.PI * 2);
-            ctx.fillStyle = "#edf756";
             ctx.fill();
             ctx.closePath();
+        });
+    }
 
+    // Update game state
+    function updateGame() {
+        if (!gameRunning) return;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        drawBasket();
+
+        // Move hearts and check for collisions
+        for (let i = hearts.length - 1; i >= 0; i--) {
+            const heart = hearts[i];
             heart.y += 2; // Move heart down
 
             // Check if heart is caught
@@ -135,10 +151,9 @@
                         pickupLines[currentPickupLine];
                     currentPickupLine++;
                 } else if (currentPickupLine === pickupLines.length) {
-                    document.getElementById("pickupLine").innerText =
-                        "";
-                    document.getElementById("endMessage").style.display =
-                        "block";
+                    document.getElementById("pickupLine").innerText = "";
+                    document.getElementById("endMessage").style.display = "block";
+                    gameRunning = false; // Stop game
                 }
                 continue;
             }
@@ -149,14 +164,33 @@
             }
         }
 
-        if (score >= pickupLines.length) return; // Stop game when all lines are unlocked
+        drawHearts();
 
-        requestAnimationFrame(updateGame);
+        requestAnimationFrame(updateGame); // Keep updating the game
     }
 
-    // Start Game Loop and Heart Generation
-    setInterval(createHeart, 1000); // Generate new hearts every second
-    updateGame();
+    // Handle basket movement
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft" && basket.x > 0) {
+            basket.x -= 20; // Move left
+        } else if (event.key === "ArrowRight" && basket.x + basket.width < canvas.width) {
+            basket.x += 20; // Move right
+        }
+    });
+
+    document.addEventListener("touchmove", (event) => {
+        let touchX = event.touches[0].clientX;
+        let canvasRect = canvas.getBoundingClientRect();
+        basket.x = touchX - canvasRect.left - basket.width / 2; // Move based on touch
+    });
+
+    function startGame() {
+        document.querySelector(".start-btn").style.display = "none";
+        gameRunning = true;
+
+        setInterval(createHeart, 1000); // Generate new hearts every second
+        updateGame(); // Start game loop
+    }
 </script>
 
 </body>
