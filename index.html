@@ -6,8 +6,8 @@
     <title>Catch My Heart ❤️</title>
     <style>
         @font-face {
-            font-family: 'Cute Dog';
-            src: url('https://fonts.cdnfonts.com/s/19185/CuteDog.ttf') format('truetype');
+            font-family: 'bhlingglers';
+            src: url('https://fonts.cdnfonts.com/bhlingglers.font') format('truetype');
         }
 
         body {
@@ -74,9 +74,8 @@
 <div class="pickup-line" id="pickupLine">Catch hearts to unlock my pickup lines!</div>
 <div id="endMessage">You were too cute to play it! 😍</div>
 
-<audio id="backgroundMusic" loop autoplay>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
+<audio id="backgroundMusic" loop>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/T3E9Wjbq44E?si=wvg3gaql3-fgcGnr" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 </audio>
 
 <script>
@@ -89,6 +88,7 @@
 
     let score = 0;
     let gameRunning = false;
+    let heartInterval;
 
     const pickupLines = [
         "Are you a magician? Because whenever I look at you, everyone else disappears!",
@@ -103,7 +103,7 @@
 
     // Create falling hearts
     function createHeart() {
-        const x = Math.random() * (canvas.width - heartRadius * 2) + heartRadius; // Random x position
+        const x = Math.random() * (canvas.width - 2 * heartRadius) + heartRadius; // Prevent clipping at edges
         hearts.push({ x, y: -heartRadius });
     }
 
@@ -147,13 +147,13 @@
                 score++;
 
                 if (currentPickupLine < pickupLines.length) {
-                    document.getElementById("pickupLine").innerText =
-                        pickupLines[currentPickupLine];
+                    document.getElementById("pickupLine").innerText = pickupLines[currentPickupLine];
                     currentPickupLine++;
                 } else if (currentPickupLine === pickupLines.length) {
                     document.getElementById("pickupLine").innerText = "";
                     document.getElementById("endMessage").style.display = "block";
-                    gameRunning = false; // Stop game
+                    gameRunning = false;
+                    clearInterval(heartInterval); // Stop generating new hearts
                 }
                 continue;
             }
@@ -181,14 +181,27 @@
     document.addEventListener("touchmove", (event) => {
         let touchX = event.touches[0].clientX;
         let canvasRect = canvas.getBoundingClientRect();
-        basket.x = touchX - canvasRect.left - basket.width / 2; // Move based on touch
+        let newX = touchX - canvasRect.left - basket.width / 2;
+
+        // Prevent basket from moving off-screen
+        if (newX < 0) newX = 0;
+        if (newX + basket.width > canvas.width) newX = canvas.width - basket.width;
+
+        basket.x = newX;
     });
 
     function startGame() {
         document.querySelector(".start-btn").style.display = "none";
         gameRunning = true;
+        score = 0;
+        currentPickupLine = 0;
+        document.getElementById("pickupLine").innerText = pickupLines[currentPickupLine];
+        document.getElementById("endMessage").style.display = "none";
+        hearts.length = 0; // Clear previous hearts
 
-        setInterval(createHeart, 1000); // Generate new hearts every second
+        document.getElementById("backgroundMusic").play(); // Start music when game begins
+
+        heartInterval = setInterval(createHeart, 1000); // Generate new hearts every second
         updateGame(); // Start game loop
     }
 </script>
