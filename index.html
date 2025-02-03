@@ -1,276 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome Cuties🎀</title>
-  <link href="https://fonts.googleapis.com/css2?family=Jellyfish+Script&display=swap" rel="stylesheet">
-  <style>
-    /* Existing CSS */
-    body {
-      font-family: 'Jellyfish Script', cursive;
-      background: linear-gradient(135deg, #fbd8b7, #e16389);
-      color: #095d9a;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-    h1 {
-      font-size: 4rem;
-      margin-top: 20%;
-      animation: bounce 2s infinite;
-    }
-    .button {
-      background-color: #095d9a;
-      color: #ffffff;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 25px;
-      font-size: 1.5rem;
-      cursor: pointer;
-      transition: transform 0.3s ease, background-color 0.3s ease;
-    }
-    .button:hover {
-      transform: scale(1.1);
-      background-color: #e16389;
-    }
-    .game-container {
-      display: none;
-      margin-top: 20px;
-    }
-    .flirty-message {
-      position: absolute;
-      font-size: 1.2rem;
-      color: #e16389;
-      animation: float 5s infinite;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
-    @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-      100% { transform: translateY(0); }
-    }
-    #game {
-      width: 100%;
-      height: 500px;
-      background: #ffffff;
-      border: 2px solid #095d9a;
-      border-radius: 10px;
-      margin: 20px auto;
-      overflow: hidden;
-    }
-    #yt-audio {
-      display: none; /* Hide the YouTube audio embed */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flirty Mini-Game</title>
+    <style>
+        @font-face {
+            font-family: 'Feelfree';
+            src: url('https://fonts.cdnfonts.com/s/19185/Feelfree.ttf') format('truetype');
+        }
 
-    /* Other CSS Styles */
-    @import url('https://fonts.googleapis.com/css?family=Roboto');
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #51e2f5;
+            font-family: 'Feelfree', sans-serif;
+            overflow: hidden;
+        }
 
-    :root {
-      --green: #9ff1a5;
-      --red: #ff9292;
-      --dim: 62px;
-    }
+        h1 {
+            text-align: center;
+            color: #edf756;
+            text-shadow: 2px 2px 5px #ffa8b6;
+            margin-top: 20px;
+        }
 
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      background-color: #f8f994;
-    }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #9df9ef;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
 
-    h1, h2 {
-      font-family: 'Roboto', sans-serif;
-      font-weight: bold;
-      color: #333;
-      margin: 10px;
-    }
+        .pickup-line {
+            text-align: center;
+            font-size: 24px;
+            color: #ffa8b6;
+            margin-top: 10px;
+        }
 
-    h1 {
-      font-size: 60px;
-    }
-
-    h2 {
-      font-size: 37px;
-    }
-  </style>
+        #endMessage {
+            text-align: center;
+            font-size: 28px;
+            color: #edf756;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <h1>Welcome Cuties🎀</h1>
-  <button class="button" onclick="startGame()">Let's Start</button>
 
-  <div class="game-container" id="game-container">
-    <div id="game">
-      <div class="init">
-        <div class="center1">
-          <h1>WE NEED YOU!</h1>
-          <p>Click on each square to plant a tree. You must hurry or the factories will colonize us!</p>
-          <p class="floating bold">START GAME</p>
-        </div>
-      </div>
-      <div class="won">
-        <div class="center">
-          <h1>YOU WON!</h1>
-          <p class="floating replay bold">Save the World again</p>
-        </div>
-      </div>
-      <div class="init hidden">
-        <h1 class="center">INCREASED VELOCITY!</h1>
-      </div>
-      <div class="container">
-        <div class="game"></div>
-      </div>
-    </div>
-  </div>
+<h1>Catch My Heart ❤️</h1>
+<canvas id="gameCanvas" width="600" height="400"></canvas>
+<div class="pickup-line" id="pickupLine">Catch hearts to unlock my pickup lines!</div>
+<div id="endMessage">You were too cute to play it! 😍</div>
 
-  <!-- YouTube Embed for "Stereo Hearts" Background Music -->
-  <iframe id="yt-audio" width="0" height="0" src="https://www.youtube.com/embed/2N4sGLMmmhA?autoplay=1&loop=1&playlist=2N4sGLMmmhA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<audio id="backgroundMusic" loop>
+    <source src="path_to_stereo_hearts.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
 
-  <script>
-    // Existing JavaScript
-    function startGame() {
-      document.querySelector('h1').style.display = 'none';
-      document.querySelector('.button').style.display = 'none';
-      document.getElementById('game-container').style.display = 'block';
+<script>
+    // Game Setup
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
 
-      // Add flirty messages
-      const messages = [
-        "You're doing great, cutie! 🎀",
-        "Wow, you're amazing! 😘",
-        "Keep going, you're killing it! 💖",
-        "You're too cute for this game! 🥰"
-      ];
+    // Variables
+    const basket = { x: canvas.width / 2 - 40, y: canvas.height - 50, width: 80, height: 20 };
+    const hearts = [];
+    const heartRadius = 10;
+    let score = 0;
 
-      setInterval(() => {
-        const message = document.createElement('div');
-        message.className = 'flirty-message';
-        message.textContent = messages[Math.floor(Math.random() * messages.length)];
-        message.style.left = `${Math.random() * 80 + 10}%`;
-        message.style.top = `${Math.random() * 80 + 10}%`;
-        document.body.appendChild(message);
-        setTimeout(() => message.remove(), 5000);
-      }, 3000);
-    }
+    const pickupLines = [
+        "Are you a magician? Because whenever I look at you, everyone else disappears!",
+        "Do you have a map? I just got lost in your eyes.",
+        "Are you made of copper and tellurium? Because you're Cu-Te.",
+        "Is your name Google? Because you've got everything I'm searching for.",
+        "You must be the square root of -1 because you can't be real.",
+        "If looks could kill, you'd be a weapon of mass seduction.",
+        "Can I borrow a kiss? I promise I'll give it back."
+    ];
 
-    const game = document.querySelector('.game');
-    var arrFactory = [];
-    var arrTree = [];
-    var newFactory;
-    var interval = 800;
+    let currentPickupLine = 0;
 
-    function createGame() {
-      for (let i = 0; i < 30; i++) {
-        let a = document.querySelector('.game');
-        let b = document.createElement('div');
-        b.classList.add('box');
-        b.setAttribute('data-value', i);
-        a.appendChild(b);
-      }
-    }
+    // Background Music
+    const backgroundMusic = document.getElementById("backgroundMusic");
+    backgroundMusic.play();
 
-    function replay() {
-      var replay = document.querySelector('.replay');
-      replay.addEventListener('click', function() {
-        box.forEach(function(box) {
-          box.classList.remove('green');
-          box.classList.remove('tree');
-        });
-        document.querySelector('.hidden').classList.add('levelUp');
-        let bang = document.querySelector('.won');
-        newFactory = setInterval(randomFactory, 600);
-        bang.style.animation = 'start .6s ease-in-out';
-        bang.style.top = '100%';
-      });
-    }
-
-    function addTree(e) {
-      let c = e.target;
-
-      if (arrTree.indexOf(c.dataset.value) == -1) {
-        arrTree.push(c.dataset.value);
-        if (arrTree.length == 30) {
-          clearInterval(newFactory);
-          document.querySelector('.hidden').classList.remove('levelUp');
-          let bang = document.querySelector('.won');
-          bang.style.animation = 'won .6s ease-in-out';
-          bang.style.top = '30%';
-          replay();
+    // Basket Movement
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft" && basket.x > 0) {
+            basket.x -= 20;
+        } else if (event.key === "ArrowRight" && basket.x + basket.width < canvas.width) {
+            basket.x += 20;
         }
-      }
+    });
 
-      if (arrFactory.indexOf(c.dataset.value) != -1) {
-        arrFactory.splice(arrFactory.indexOf(c.dataset.value), 1);
-      }
-      c.classList.remove('red');
-      c.classList.remove('factory');
-      c.classList.add('green');
-      c.classList.add('tree');
+    // Create Falling Hearts
+    function createHeart() {
+        const x = Math.random() * (canvas.width - heartRadius * 2) + heartRadius;
+        hearts.push({ x, y: -heartRadius });
     }
 
-    function randomFactory() {
-      let e = Math.random() * 30;
-      let g = Math.floor(e);
+    // Update Game State
+    function updateGame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (arrFactory.indexOf(box[g].dataset.value) == -1) {
-        arrFactory.push(box[g].dataset.value);
-        box[g].classList.add('red');
-        box[g].classList.remove('green');
-        box[g].classList.add('factory');
-        if (arrFactory.length == 30) {
-          clearInterval(newFactory);
+        // Draw Basket
+        ctx.fillStyle = "#ffa8b6";
+        ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+
+        // Draw Hearts
+        for (let i = hearts.length - 1; i >= 0; i--) {
+            const heart = hearts[i];
+            ctx.beginPath();
+            ctx.arc(heart.x, heart.y, heartRadius, 0, Math.PI * 2);
+            ctx.fillStyle = "#edf756";
+            ctx.fill();
+            ctx.closePath();
+
+            heart.y += 2; // Move heart down
+
+            // Check if heart is caught
+            if (
+                heart.y + heartRadius > basket.y &&
+                heart.x > basket.x &&
+                heart.x < basket.x + basket.width
+            ) {
+                hearts.splice(i, 1); // Remove caught heart
+                score++;
+
+                if (currentPickupLine < pickupLines.length) {
+                    document.getElementById("pickupLine").innerText =
+                        pickupLines[currentPickupLine];
+                    currentPickupLine++;
+                } else if (currentPickupLine === pickupLines.length) {
+                    document.getElementById("pickupLine").innerText =
+                        "";
+                    document.getElementById("endMessage").style.display =
+                        "block";
+                }
+                continue;
+            }
+
+            // Remove hearts that fall off-screen
+            if (heart.y > canvas.height) {
+                hearts.splice(i, 1);
+            }
         }
-      }
 
-      if (arrTree.indexOf(box[g].dataset.value) != -1) {
-        arrTree.splice(arrTree.indexOf(box[g].dataset.value), 1);
-      }
+        if (score >= pickupLines.length) return; // Stop game when all lines are unlocked
+
+        requestAnimationFrame(updateGame);
     }
 
-    var yol = document.querySelector('.yolo');
+    // Start Game Loop and Heart Generation
+    setInterval(createHeart, 1000); // Generate new hearts every second
+    updateGame();
+</script>
 
-    createGame();
-
-    var box = document.querySelectorAll('.box');
-    var start = document.querySelector('.floating');
-    start.addEventListener('click', function() {
-      let init = document.querySelector('.init');
-      init.style.animation = 'start .5s ease-in';
-      init.style.top = '100%';
-      newFactory = setInterval(randomFactory, interval);
-    });
-
-    box.forEach(function(box) {
-      box.addEventListener('click', addTree, false);
-    });
-
-    function fire(e) {
-      let trg = e.target;
-      const itemDim = this.getBoundingClientRect(),
-        itemSize = {
-          x: itemDim.right - itemDim.left,
-          y: itemDim.bottom - itemDim.top,
-        };
-
-      let burst = new mojs.Burst({
-        left: itemDim.left + (itemSize.x / 2),
-        top: itemDim.top + (itemSize.y / 1.7),
-        count: 9,
-        radius: { 50: 90 },
-      });
-      burst.play();
-    }
-
-    box.forEach(function(box) {
-      box.addEventListener('click', fire);
-    });
-
-    function startMiniGame() {
-      // Your game-specific logic
-    }
-  </script>
 </body>
 </html>
